@@ -159,14 +159,6 @@ UDP-TesidModeloFamaFrench/
 | `matplotlib` / `seaborn` | Visualizaciones |
 | `jupyter` | Entorno de desarrollo interactivo |
 
-### Instalación
-
-```bash
-git clone https://github.com/Cristian-illanes/UDP-TesidModeloFamaFrench.git
-cd UDP-TesidModeloFamaFrench
-pip install -r requirements.txt
-```
-
 ---
 
 ## Plan de Desarrollo (24 semanas)
