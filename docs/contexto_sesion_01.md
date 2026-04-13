@@ -100,35 +100,69 @@ Los datos se guardaron en Google Drive (carpeta `1. Datos`, cuenta `cristian.ill
 
 ## 6. Enfoque para el mercado chileno
 
-**Pregunta:** ¿Es razonable aplicar el modelo FF6 al mercado chileno?
+**Pregunta:** ¿Existirá algún enfoque para el mercado chileno o es poco razonable?
 
-**Respuesta:** Sí, es razonable y tiene precedente académico. Pero hay limitaciones importantes.
+**Respuesta:**
 
-### Limitaciones del mercado chileno
+Es totalmente razonable y tiene precedente académico, pero hay que ser honesto sobre las limitaciones del mercado chileno.
+
+---
+
+### Lo que hace viable el enfoque
+
+Existe literatura previa sobre modelos de factores en mercados latinoamericanos. No estás entrando en territorio inexplorado — hay papers sobre FF en Chile, Brasil, México y el MILA que puedes citar como antecedente.
+
+El CMF publica datos financieros de todas las empresas que cotizan en bolsa (estados financieros, capitalización bursátil, ratios) que son necesarios para construir los factores HML, RMW y CMA.
+
+---
+
+### Las limitaciones reales
 
 | Problema | Impacto |
 |---|---|
-| **Universo pequeño** | IPSA tiene 30 acciones — portafolios de factores muy delgados |
-| **Baja liquidez** | Muchas acciones tienen días sin transacciones |
-| **Historial corto** | Datos confiables desde ~1995–2000 |
-| **Concentración sectorial** | Dominio de retail, utilities y recursos naturales |
-| **Momentum débil** | WML tiene evidencia débil en Chile |
+| **Universo pequeño** | El IPSA tiene 30 acciones, la bolsa completa ~200 con baja liquidez. Los portafolios de factores quedan muy delgados |
+| **Liquidez** | Muchas acciones chilenas tienen días sin transacciones — los retornos calculados son artificiales |
+| **Historial corto** | Datos confiables desde ~1995–2000. FF necesita ciclos completos (crisis, recuperación) |
+| **Concentración sectorial** | La bolsa chilena está dominada por retail, utilities y recursos naturales — poca diversidad para capturar todos los factores |
+| **Factor momentum** | WML en Chile tiene evidencia débil comparado con EE.UU. |
 
-### Enfoques posibles
+---
 
-| Opción | Descripción | Complejidad |
-|---|---|---|
-| **1 — Factores globales aplicados a Chile** | Usar factores FF6 de EE.UU. y regresarlos contra retornos chilenos | Baja |
-| **2 — Factores MILA** | Construir factores con Chile + Perú + Colombia + México (~300 stocks) | Media |
-| **3 — Factores FF locales puros** | Construir SMB, HML, etc. solo con acciones de la Bolsa de Santiago | Alta |
+### Los enfoques posibles (de menor a mayor complejidad)
 
-### Recomendación acordada
+**Opción 1 — Aplicar factores de EE.UU. a acciones chilenas**
+
+Usas los factores FF6 de la librería de French y los regresas contra retornos de acciones chilenas. Esto responde la pregunta: *¿explican los factores globales los retornos locales?*
+- Simple de implementar
+- Sustento en la literatura de factores globales vs. locales
+
+**Opción 2 — Construir factores FF locales (MILA)**
+
+En lugar de usar solo Chile (~30 stocks), amplías el universo al MILA (Chile + Perú + Colombia + México, ~300 stocks). Esto da suficiente masa para construir portafolios SMB, HML, etc. con metodología French.
+- Más robusto estadísticamente
+- Responde una pregunta más relevante para la industria regional
+
+**Opción 3 — Factores FF puramente chilenos**
+
+Construyes SMB, HML, RMW, CMA y WML solo con acciones de la Bolsa de Santiago. Factible, pero los portafolios de factores tendrán 5–10 acciones cada uno.
+- Alta varianza en los estimadores
+- El aporte académico está en documentar qué tan bien funcionan en un mercado pequeño
+
+---
+
+### Recomendación concreta para la tesis
+
+El enfoque más publicable y con mejor sustento sería:
 
 > **Opción 1 como baseline + Opción 3 como análisis local**
 >
-> 1. Estimar si los factores globales FF6 explican retornos chilenos → test de integración de mercados
-> 2. Construir factores locales con acciones de la bolsa → test de primas locales
-> 3. Comparar ambos enfoques → contribución al conocimiento sobre mercados emergentes
+> 1. Primero estimas si los factores globales de FF6 explican retornos chilenos → test de integración de mercados
+> 2. Luego construyes factores locales con las acciones de la bolsa → test de primas locales
+> 3. Comparas ambos: ¿cuál explica mejor? ¿hay un alpha residual?
+>
+> Esa comparación es en sí misma una contribución al conocimiento, especialmente para un mercado emergente como Chile.
+
+---
 
 ### Fuentes de datos para Chile
 
