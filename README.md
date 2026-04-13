@@ -1,7 +1,7 @@
 # Forecasting, Riesgo y Asset Allocation mediante el Modelo de Seis Factores de Fama-French
 
 **Tesis de Magíster — Universidad Diego Portales**  
-**Autor:** VARIOS AUTORES  
+**Autores:** Álvaro Gatica, Fernanda Rojas, Luis Pizarro y Cristian Illanes  
 **Programa:** Magíster en Finanzas  
 
 ---
