@@ -1,0 +1,153 @@
+# Contexto — Sesión 01 de Trabajo
+
+**Fecha:** 13 de abril de 2026  
+**Participantes:** Cristian Illanes + Claude (IA)  
+**Propósito:** Registro de decisiones, preguntas y respuestas relevantes para el desarrollo de la tesis.
+
+---
+
+## 1. Configuración inicial del repositorio
+
+Se creó el repositorio `UDP-TesidModeloFamaFrench` y se subió el README con la estructura de la tesis, los autores y el plan de desarrollo.
+
+**Autores definidos:** Álvaro Gatica, Fernanda Rojas, Luis Pizarro y Cristian Illanes  
+**Convención de idioma:** Todo el proyecto — código, comentarios, documentación y nombres de variables — está escrito en **español**.
+
+---
+
+## 2. Primer notebook creado
+
+Se generó `notebooks/01_datos_estadisticas.ipynb` con comentarios línea a línea en español, tabla explicativa de cada librería y contexto económico en las celdas markdown.
+
+**Librerías principales:**
+
+| Librería | Rol |
+|---|---|
+| `pandas` | Manipulación de datos tabulares |
+| `numpy` | Álgebra lineal y operaciones numéricas |
+| `pandas_datareader` | Descarga de factores FF6 desde la librería de Kenneth French |
+| `yfinance` | Descarga de precios históricos desde Yahoo Finance |
+| `statsmodels` | Regresiones OLS de series de tiempo |
+| `arch` | Modelos GARCH y GJR-GARCH |
+| `cvxpy` | Optimización convexa (GMVP, MV, Max Sharpe) |
+| `scipy` | Estadística y distribuciones de probabilidad |
+| `matplotlib` / `seaborn` | Visualizaciones |
+
+---
+
+## 3. ¿De dónde vienen los retornos?
+
+**Pregunta:** ¿De dónde vienen los retornos que usa el modelo?
+
+**Respuesta:** Los retornos se calculan a partir de los **precios de cierre ajustados** que descarga `yfinance` desde Yahoo Finance.
+
+La fórmula es:
+
+```
+Retorno_t = (Precio_t - Precio_{t-1}) / Precio_{t-1}
+```
+
+El precio **ajustado** incorpora retroactivamente dividendos y splits, lo que permite calcular retornos totales reales sin sesgos por eventos corporativos.
+
+Se calculan en dos frecuencias:
+- **Diarios:** para los modelos GARCH (notebook 04)
+- **Mensuales:** para las regresiones FF6 (alineados con la frecuencia de los factores de la librería de French)
+
+---
+
+## 4. Ejemplo de datos reales: 2000–2015
+
+Se descargaron y verificaron los datos del período 200001–201501. Muestra de los factores FF6:
+
+| Fecha | Mkt-RF | SMB | HML | RMW | CMA | RF | WML |
+|---|---|---|---|---|---|---|---|
+| 2000-01 | -0.0474 | +0.0421 | -0.0112 | -0.0615 | +0.0456 | 0.0041 | +0.0186 |
+| 2000-02 | +0.0245 | +0.1846 | -0.0977 | -0.1895 | -0.0113 | 0.0043 | +0.1802 |
+| 2000-03 | +0.0521 | -0.1554 | +0.0850 | +0.1165 | -0.0120 | 0.0047 | -0.0685 |
+
+Los valores son **retornos decimales mensuales** (ej. `-0.0474` = caída de 4.74% en enero 2000).
+
+Los datos se guardaron en Google Drive (carpeta `1. Datos`, cuenta `cristian.illanes@mail.udp.cl`):
+
+| Archivo | Contenido | Dimensiones |
+|---|---|---|
+| `factores_ff6_mensuales_200001_201501.csv` | 7 factores FF6 + RF | 125 meses × 7 cols |
+| `retornos_mensuales_200001_201501.csv` | Retornos mensuales de 16 activos | 125 meses × 16 cols |
+| `retornos_diarios_200001_201501.csv` | Retornos diarios de 16 activos | 2.630 días × 16 cols |
+
+---
+
+## 5. Decisión pendiente: universo de activos
+
+**Pregunta:** ¿Las empresas seleccionadas (AAPL, MSFT, JPM, etc.) tienen sustento en su elección?
+
+**Respuesta:** **No.** Son una selección por defecto usada para ilustrar el código. Tienen dos problemas académicos graves:
+
+1. **Sesgo de supervivencia:** se eligieron empresas que hoy son exitosas, sobreestimando retornos históricos.
+2. **No representan bien los factores:** SMB y HML necesitan variedad real en tamaño y múltiplos de valoración.
+
+### Opciones académicamente válidas
+
+| Opción | Universo | Sustento |
+|---|---|---|
+| **A — Portafolios FF (recomendada)** | 25 portafolios 5×5 (Size × B/M) de Kenneth French | Estándar en la literatura FF, elimina sesgo de selección |
+| **B — S&P 500 completo** | ~500 acciones del índice | Amplio y líquido |
+| **C — Top 100 por capitalización** | Las 100 mayores por período | Manejable con criterio explícito |
+
+> **Pendiente:** definir el universo final de activos antes del notebook 02.
+
+---
+
+## 6. Enfoque para el mercado chileno
+
+**Pregunta:** ¿Es razonable aplicar el modelo FF6 al mercado chileno?
+
+**Respuesta:** Sí, es razonable y tiene precedente académico. Pero hay limitaciones importantes.
+
+### Limitaciones del mercado chileno
+
+| Problema | Impacto |
+|---|---|
+| **Universo pequeño** | IPSA tiene 30 acciones — portafolios de factores muy delgados |
+| **Baja liquidez** | Muchas acciones tienen días sin transacciones |
+| **Historial corto** | Datos confiables desde ~1995–2000 |
+| **Concentración sectorial** | Dominio de retail, utilities y recursos naturales |
+| **Momentum débil** | WML tiene evidencia débil en Chile |
+
+### Enfoques posibles
+
+| Opción | Descripción | Complejidad |
+|---|---|---|
+| **1 — Factores globales aplicados a Chile** | Usar factores FF6 de EE.UU. y regresarlos contra retornos chilenos | Baja |
+| **2 — Factores MILA** | Construir factores con Chile + Perú + Colombia + México (~300 stocks) | Media |
+| **3 — Factores FF locales puros** | Construir SMB, HML, etc. solo con acciones de la Bolsa de Santiago | Alta |
+
+### Recomendación acordada
+
+> **Opción 1 como baseline + Opción 3 como análisis local**
+>
+> 1. Estimar si los factores globales FF6 explican retornos chilenos → test de integración de mercados
+> 2. Construir factores locales con acciones de la bolsa → test de primas locales
+> 3. Comparar ambos enfoques → contribución al conocimiento sobre mercados emergentes
+
+### Fuentes de datos para Chile
+
+| Fuente | Contenido | Acceso |
+|---|---|---|
+| Yahoo Finance (`.SN`) | Precios históricos IPSA | Gratuito vía yfinance |
+| CMF (cmf.cl) | Estados financieros, capitalización bursátil | Gratuito, descarga manual |
+| Bolsa de Santiago | Precios históricos completos | Convenio UDP |
+| Economatica | Base estándar en academia latinoamericana | Probablemente vía UDP |
+
+---
+
+## Decisiones y pendientes al cierre de la sesión
+
+- [x] Repositorio creado y configurado
+- [x] README con estructura, autores y plan de 7 meses
+- [x] Notebook 01 creado con comentarios detallados
+- [x] Datos del período 200001–201501 guardados en Drive
+- [ ] **Pendiente:** definir universo final de activos (portafolios FF vs. S&P 500 vs. top 100)
+- [ ] **Pendiente:** explorar disponibilidad de acciones chilenas en Yahoo Finance (`.SN`)
+- [ ] **Pendiente:** decidir enfoque para el mercado chileno (global vs. local vs. MILA)
+- [ ] **Pendiente:** crear notebook 02 (regresiones FF6)
