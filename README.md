@@ -6,6 +6,12 @@
 
 ---
 
+## Idioma del Proyecto
+
+Todo el código, comentarios, documentación, nombres de variables y notebooks de este proyecto están escritos en **español**. Esto incluye comentarios en el código, títulos de gráficos, nombres de columnas y archivos exportados.
+
+---
+
 ## Resumen Ejecutivo
 
 Esta investigación propone y evalúa un **framework cuantitativo integrado** para la construcción y gestión de portafolios de inversión, articulando tres dimensiones fundamentales: forecasting de retornos esperados, modelamiento condicional del riesgo y optimización avanzada de portafolios.
