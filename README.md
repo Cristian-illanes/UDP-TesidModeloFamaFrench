@@ -161,16 +161,89 @@ UDP-TesidModeloFamaFrench/
 
 ---
 
-## Plan de Desarrollo (24 semanas)
+## Plan de Desarrollo (7 meses · 24 semanas)
 
-| Fase | Semanas | Contenido |
-|------|---------|-----------|
-| **1 — Fundamentos y datos** | 1–3 | Setup, descarga FF6, regresiones, covarianza factorial |
-| **2 — Optimización** | 4–7 | GMVP, MV, Max Sharpe, backtesting out-of-sample |
-| **3 — Riesgo condicional** | 8–11 | GARCH, VaR, ES, backtesting estadístico |
-| **4 — Black-Litterman** | 12–15 | BL clásico, views FF6, portafolio BL integrado |
-| **5 — Mercado chileno** | 16–19 | Factores locales, aplicación IPSA, comparación USA |
-| **6 — Escritura y entrega** | 20–24 | Redacción final, revisión, repositorio documentado |
+> Con 7 meses el framework completo es viable: FF6 + GARCH + VaR/ES + GMVP/MV/Max Sharpe + Black-Litterman + aplicación Chile. Sin recortes.
+
+**Carga estimada:** ~7 hrs/semana · ~168 hrs mínimo · ~240 hrs a 10 hrs/semana
+
+---
+
+### Fase 1 — Fundamentos teóricos y datos `semanas 1–3` · ~21 hrs
+
+| Semana | Foco | Actividades |
+|--------|------|-------------|
+| 1 | Setup + datos | Lectura: MOSEK Cap 2, Markowitz (1952). Código: descarga factores FF6 + retornos S&P 500 con yfinance, exploración inicial |
+| 2 | Modelo FF6 — teoría | Lectura: Cajas Cap 4 (4.2.1), Fama & French (2015, 2018), Asness et al. (2013) — momentum. Código: estadísticas descriptivas de factores FF6 |
+| 3 | Regresiones FF6 + covarianza factorial | Lectura: Cajas Cap 3, Ledoit & Wolf (2004), MOSEK Cap 5. Código: regresiones por acción, betas, alphas, matriz de covarianza factorial vs. muestral. Escritura: borrador Cap 2 |
+
+**Entregable:** base de datos limpia + betas FF6 + matriz de covarianza factorial
+
+---
+
+### Fase 2 — Optimización de portafolios `semanas 4–7` · ~28 hrs
+
+| Semana | Foco | Actividades |
+|--------|------|-------------|
+| 4 | GMVP y Media-Varianza | Lectura: MOSEK Cap 4, Cajas Cap 8 (8.2.1–8.2.2). Código: GMVP y frontera eficiente con CVXPY, benchmark 1/N |
+| 5 | Max Sharpe + restricciones reales | Lectura: Cajas Cap 8 (8.2.4), Cap 9, DeMiguel et al. (2009). Código: Max Sharpe ratio, restricciones long-only y peso máximo |
+| 6 | Backtesting out-of-sample | Lectura: Cajas Cap 11, MOSEK App 13. Código: rolling window out-of-sample, métricas Sharpe, Sortino, Drawdown, Turnover |
+| 7 | Buffer + escritura | Ajustes al código, revisión de resultados. Escritura: borrador Cap 4 |
+
+**Entregable:** 3 portafolios optimizados + tabla comparativa out-of-sample completa
+
+---
+
+### Fase 3 — Gestión de riesgo condicional `semanas 8–11` · ~28 hrs
+
+| Semana | Foco | Actividades |
+|--------|------|-------------|
+| 8 | GARCH sobre residuos FF6 | Lectura: Danielsson Cap 3, Engle (1982), Bollerslev (1986). Código: GARCH(1,1) y GJR-GARCH sobre residuos FF6, selección AIC/BIC |
+| 9 | VaR y Expected Shortfall dinámicos | Lectura: Danielsson Caps 4–6, MOSEK Cap 8 (8.2), Jorion. Código: VaR paramétrico + ES condicional GARCH vs. VaR histórico |
+| 10 | Backtesting de modelos de riesgo | Lectura: Danielsson Cap 9, Hansen & Lunde (2005). Código: pruebas Kupiec y Christoffersen, VaR/ES integrado a portafolios |
+| 11 | Buffer + escritura | Ajustes, revisión de resultados. Escritura: borrador Cap 3 |
+
+**Entregable:** VaR y ES dinámico por portafolio + backtesting estadístico validado
+
+---
+
+### Fase 4 — Black-Litterman con views FF6 `semanas 12–15` · ~28 hrs
+
+| Semana | Foco | Actividades |
+|--------|------|-------------|
+| 12 | Teoría BL clásico | Lectura: Black & Litterman (1992), Cajas Cap 5 (5.1 completo). Código: BL clásico con equilibrio de mercado y views simples |
+| 13 | Views extraídas de FF6 | Lectura: Cajas Cap 5 (5.2 Augmented BL, 5.3 BL Bayes). Código: views a partir de factores FF6 (alpha, momentum, value), calibración de confianza |
+| 14 | BL + optimización integrada | Código: portafolio BL-FF6 optimizado, comparación con GMVP/MV/Max Sharpe, backtesting out-of-sample |
+| 15 | Buffer + escritura | Ajustes al modelo BL. Escritura: sección BL dentro del Cap 4 |
+
+**Entregable:** portafolio BL-FF6 con views factoriales + comparación completa de 4 estrategias
+
+---
+
+### Fase 5 — Aplicación mercado chileno `semanas 16–19` · ~28 hrs
+
+| Semana | Foco | Actividades |
+|--------|------|-------------|
+| 16 | Datos chilenos + construcción de factores | Código: descarga acciones S&P CLX / IPSA, construcción de factores FF locales (SMB, HML, WML) |
+| 17 | Aplicar framework al mercado chileno | Código: regresiones FF6 locales, optimización GMVP y Max Sharpe, VaR y ES para portafolios chilenos |
+| 18 | Comparación USA vs. Chile | Código: tabla comparativa de desempeño, riesgo y primas factoriales. Escritura: borrador Cap 5 |
+| 19 | Buffer fase Chile | Holgura para construcción de factores locales (parte más incierta del proyecto). Escritura: ajustes Cap 5 |
+
+**Entregable:** framework aplicado a Chile + comparación USA vs. mercado emergente
+
+---
+
+### Fase 6 — Escritura e integración final `semanas 20–24` · ~35 hrs
+
+| Semana | Foco | Actividades |
+|--------|------|-------------|
+| 20 | Cap 1 — Introducción completa | Escritura: introducción, motivación, objetivos, hipótesis. Lectura: Ang (2014), Grinold & Kahn |
+| 21 | Revisión Caps 2, 3 y 4 | Escritura: pulir y conectar capítulos centrales, consistencia de notación. Código: dashboard final con resultados integrados |
+| 22 | Cap 6 — Conclusiones | Escritura: conclusiones, limitaciones, implicancias para la industria, trabajo futuro |
+| 23 | Revisión completa + bibliografía | Escritura: revisión integral, formato, bibliografía. Código: documentar y subir repositorio reproducible |
+| 24 | Buffer final y entrega | Holgura para imprevistos o correcciones del director. **Entrega final:** documento + código + presentación |
+
+**Entregable final:** tesis completa (6 capítulos) + código reproducible + presentación
 
 ---
 
